@@ -3,8 +3,10 @@ import lottie from "lottie-web";
 import { useLocation } from "react-router-dom";
 import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
+import { useNavigate } from "react-router-dom";
 
 const PersonalDetaills = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { userId } = location.state || {};
   const [formData, setFormData] = useState({});
@@ -64,6 +66,7 @@ const PersonalDetaills = () => {
       const docRef = doc(collection(db, "Resumers"), userId);
       await updateDoc(docRef, data); // Save data to Firestore
       alert("Data saved successfully!");
+      navigate("/skill-achievements", { state: { userId: userId } });
     } catch (error) {
       console.error("Error saving data: ", error);
       alert("Error saving data. Please try again.");
