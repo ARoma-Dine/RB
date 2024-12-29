@@ -1,5 +1,8 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import lottie from "lottie-web";
+import { signInWithGoogle, saveUserDetails } from "./../../firebase"; // Import from your firebase.js file
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -12,6 +15,34 @@ const Login = () => {
       path: "https://lottie.host/e9b8d251-fe13-4202-9004-ae516f6b855e/dRCwt4lR2W.json", // Animation JSON URL
     });
   }, []);
+  const navigate = useNavigate();
+  const db = getFirestore();
+
+  const handleGoogleLogin = async () => {
+    try {
+      // Sign in with Google
+      const user = await signInWithGoogle();
+
+      // Check if the user exists in the Firestore database
+      const userDocRef = doc(db, "users", user.uid); // Get reference to the user's document in Firestore
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        // User exists, alert and navigate to personal details page
+        alert("User exists");
+        navigate("/personal-details", { state: { userId: user.uid } });
+      } else {
+        // User doesn't exist, create new user document
+        await saveUserDetails(user);
+
+        // After saving user details, navigate to the personal details page
+        navigate("/personal-details", { state: { userId: user.uid } });
+      }
+    } catch (err) {
+      console.error("Google Login error:", err);
+      alert("Failed to login with Google. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -62,6 +93,7 @@ const Login = () => {
                   (e.currentTarget.style.boxShadow =
                     styles.googleButton.boxShadow)
                 }
+                onClick={handleGoogleLogin}
               >
                 <img
                   src="/search.png"
