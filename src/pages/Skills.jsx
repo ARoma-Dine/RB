@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Skills = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { userId } = location.state || {};
 
@@ -67,6 +69,7 @@ const Skills = () => {
       const docRef = doc(db, "Resumers", userId);
       await updateDoc(docRef, data); // Save data to Firestore
       alert("Data saved successfully!");
+      navigate("/resume", { state: { userId: userId } });
     } catch (error) {
       console.error("Error saving data: ", error);
       alert("Error saving data. Please try again.");

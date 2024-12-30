@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import lottie from "lottie-web";
-import { useLocation } from "react-router-dom";
-import { collection, doc, setDoc, updateDoc } from "firebase/firestore";
+import { useLocation, useNavigate } from "react-router-dom";
+import { collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "./../../firebase";
-import { useNavigate } from "react-router-dom";
 
 const PersonalDetaills = () => {
   const navigate = useNavigate();
@@ -64,9 +63,8 @@ const PersonalDetaills = () => {
       }
 
       const docRef = doc(collection(db, "Resumers"), userId);
-      await updateDoc(docRef, data); // Save data to Firestore
-      alert("Data saved successfully!");
-      navigate("/skill-achievements", { state: { userId: userId } });
+      await updateDoc(docRef, data);
+      navigate("/academic-details", { state: { userId: userId } });
     } catch (error) {
       console.error("Error saving data: ", error);
       alert("Error saving data. Please try again.");
@@ -87,6 +85,9 @@ const PersonalDetaills = () => {
               onSubmit={handleSubmit}
               style={styles.form}
             >
+              <h2 style={{ marginBottom: 4, fontSize: 22 }}>
+                Basic Information
+              </h2>
               <div style={styles.container}>
                 <div style={styles.row}>
                   <label htmlFor="firstName" style={styles.label}>
